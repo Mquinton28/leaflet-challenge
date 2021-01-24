@@ -1,18 +1,39 @@
-var eartquakeURL = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson'
+var earthquakeURL = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson'
 
 // GET request to query the URL
 
-d3.json(earquakeURL, function(data) {
+d3.json(earthquakeURL, function(data) {
     createFeatures(data.features);
+    console.log(data.features)
 });
 
 function createFeatures(earthquakeData) {
-
-    var earthquake = L.geoJSON(earthquakeData, {
-        onEachFeature: function(feature, layer) {
-            layer.bindPopup('<h3>Magnotude: ' + feature.properties.mag + '<h3><h3>Location: ' + feature.properties.place + '</h3><hr><p>' + new Date(feature.properties.time)+ '</p>');
+    function onEachFeature(feature, layer) {
+            layer.bindPopup('<h3>Magnitude: ' + feature.properties.mag + '<h3><h3>Location: ' + feature.properties.place + '</h3><hr><p>' + new Date(feature.properties.time)+ '</p>')
         }
-    });
+        function size(magnitude) {
+            return magnitude * 5000;
+        }
+        function circleColor(magnitude) {
+            if (magnitude < 1) {
+                return 'dark green'
+            }
+            else if (magnitude < 2) {
+                return 'green'
+            }
+            else if (magnitude < 3) {
+                return 'yellow'
+            }
+            else if (magnitude < 4) {
+                return 'orange'
+            }
+            else if (magnitude < 5) {
+                return 'red'
+            }
+            else {
+                return 'green'
+            }
+        }
 
     createMap(earthquakes);
 }
