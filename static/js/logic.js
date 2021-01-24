@@ -1,28 +1,8 @@
-// set up map
-// Creating map object
-var myMap = L.map("map", {
-    center: [34.0522, -118.2437],
-    zoom: 8
-  });
-  
-  // Adding tile layer
-  L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
-    attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
-    tileSize: 512,
-    maxZoom: 18,
-    zoomOffset: -1,
-    id: "mapbox/streets-v11",
-    accessToken: API_KEY
-  }).addTo(myMap);
-
-
-
-
-var eartquakeUrl = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson'
+var eartquakeURL = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson'
 
 // GET request to query the URL
 
-d3.json(earquakeUrl, function(data) {
+d3.json(earquakeURL, function(data) {
     createFeatures(data.features);
 });
 
@@ -32,5 +12,43 @@ function createFeatures(earthquakeData) {
         onEachFeature: function(feature, layer) {
             layer.bindPopup('<h3>Magnotude: ' + feature.properties.mag + '<h3><h3>Location: ' + feature.properties.place + '</h3><hr><p>' + new Date(feature.properties.time)+ '</p>');
         }
-    })
+    });
+
+    createMap(earthquakes);
 }
+
+// set up map
+// Creating map object
+
+function createMap(earthquakes)
+
+  
+    // Define streetmap and darkmap layers
+    var grayscale = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/dark-v9/tiles/256/{z}/{x}/{y}?" +
+      "access_token=pk.eyJ1IjoiYXN3YXRoeW0iLCJhIjoiY2plajZjcGk5MDQ3ajJ3bWQ5bTlxY2I0dSJ9._Dq0RpjIWL058qCxH3LmOA");
+  
+    var satellite = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v10/tiles/256/{z}/{x}/{y}?" +
+    "access_token=pk.eyJ1IjoiYXN3YXRoeW0iLCJhIjoiY2plajZjcGk5MDQ3ajJ3bWQ5bTlxY2I0dSJ9._Dq0RpjIWL058qCxH3LmOA");
+  
+    var outdoors = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/outdoors-v10/tiles/256/{z}/{x}/{y}?" +
+    "access_token=pk.eyJ1IjoiYXN3YXRoeW0iLCJhIjoiY2plajZjcGk5MDQ3ajJ3bWQ5bTlxY2I0dSJ9._Dq0RpjIWL058qCxH3LmOA");
+
+  // Adding tile layer
+var baseMaps = {
+    "Satellite": satellite,
+    "Grayscale": grayscale,
+    "Outdoor": outdoors
+};
+
+var overlayMaps = {
+    "Earthquakes": earthquakes,
+}
+
+var myMap = L.map('mapid', {
+    center: [
+        37.09, -97.71
+    ],
+    zoom: 5,
+    layers: [satellite]
+});
+
