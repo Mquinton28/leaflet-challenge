@@ -1,4 +1,4 @@
-var earthquakeURL = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson'
+var earthquakeURL = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson';
 
 // GET request to query the URL
 
@@ -35,6 +35,18 @@ function createFeatures(earthquakeData) {
             }
         }
 
+// earthquake funciton
+var earthquakes = L.geoJSON(earthquakeData, {
+    pointToLayer: function(earthquakeData, latlong) {
+        return L.circl(latlong, {
+            radius: radiusSize(earthquakeData.properties.mag),
+            color: circleColor(earthquakeData.properties.mag),
+            fillOpacity: 1
+        });
+    },
+    onEachFeature: onEachFeature
+});
+
     createMap(earthquakes);
 }
 
@@ -70,6 +82,9 @@ var myMap = L.map('mapid', {
         37.09, -97.71
     ],
     zoom: 5,
-    layers: [satellite]
+    layers: [satellite, grayscale, outdoors]
 });
 
+L.control.layers(baseMaps, overlayMaps, {
+    collapsed: false
+}).addTo(myMap);
